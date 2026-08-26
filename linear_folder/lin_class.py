@@ -1,7 +1,7 @@
 import random
 
 class LinClass:
-    def __init__(self, alpha = 0.0001, w1 = random.randint(-10, 10), w0 = random.randint(-10, 10)):
+    def __init__(self, alpha = 0.01, w1 = random.randint(-10, 10), w0 = random.randint(-10, 10)):
         self.w1 = w1
         self.w0 = w0
         self.alpha = alpha
