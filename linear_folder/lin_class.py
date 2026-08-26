@@ -1,7 +1,7 @@
 import random
 
 class LinClass:
-    def __init__(self, alpha = 0.1, w1 = random.randint(-10, 10), w0 = random.randint(-10, 10)):
+    def __init__(self, alpha = 0.0001, w1 = random.randint(-10, 10), w0 = random.randint(-10, 10)):
         self.w1 = w1
         self.w0 = w0
         self.alpha = alpha
@@ -26,8 +26,8 @@ class LinClass:
             y_hat = self.calculate(i)
             residuals_0.append(j - y_hat)
             residuals_1.append((j - y_hat) * i)
-        self.w0 -= self.alpha * sum(residuals_0) * 2/len(points)
-        self.w1 -= self.alpha * sum(residuals_1) * 2/len(points)
+        self.w0 += 2 * self.alpha * sum(residuals_0)/len(points)
+        self.w1 += 2 * self.alpha * sum(residuals_1)/len(points)
 
     #check if model is live
     def working_class(self):
