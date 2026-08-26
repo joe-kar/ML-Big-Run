@@ -1,2 +1,4 @@
 durm.py
 test.py
+__pycache__/
+*.pyc
