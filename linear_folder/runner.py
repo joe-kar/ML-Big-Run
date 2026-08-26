@@ -7,7 +7,7 @@ def main(message = "yeet"):
     model = LinClass()
     model.working_class()
     print(model.w1)
-    print(model.w2)    
+    print(model.w2)
 
 #Here we create a random set of points that the model will try to fit
 def generate_points():

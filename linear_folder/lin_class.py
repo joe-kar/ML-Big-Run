@@ -5,5 +5,5 @@ class LinClass:
         self.w1 = w1
         self.w2 = w2
 
-    def working_class():
+    def working_class(self):
         print("Eat the rich!")
