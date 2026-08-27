@@ -2,15 +2,19 @@ import random
 import csv
 from multilin_class import multilin
 
-def main():
-    actual_line = generate_line()
-    unsanitized_xs, ys = generate_points(actual_line)
+def main(): 
+    row_names = ["Cement", "Blast Furnace Slag", "Fly Ash", "Water", "Superplasticizer", "Coarse Aggregate", "Fine Aggregate", "Age"]
+    y_name = "Strength"
+    unsanitized_xs, ys = read_in_data("concrete_data.csv", row_names, y_name)
+    #actual_line = generate_line()
+    #unsanitized_xs, ys = generate_points(actual_line)
     training_x_unsatized, training_y, testing_x_unsanitized, testing_y = split(unsanitized_xs, ys)
     training_x_sanitized, means, stdevs = normalize(training_x_unsatized)
     testing_x_sanitized = normalize_known(testing_x_unsanitized, means, stdevs)
     model = multilin(training_x_sanitized, training_y)
-    print(f"Guess: {model.calculate(testing_x_sanitized[0] + [1])} Actual: {testing_y[0]}")
-    for i in range(1000):
+    temp_yhats = [model.calculate(j) for j in training_x_sanitized]
+    print(f"Guess: {model.calculate(testing_x_sanitized[0] + [1])} Actual: {testing_y[0]}, MSE: {model.MSE(temp_yhats)}")
+    for i in range(10000):
         model.update()
         if (i + 1) % 100 == 0:
             temp_yhats = [model.calculate(j) for j in training_x_sanitized]
@@ -86,6 +90,17 @@ def split(xs, ys):
             training_x.append(j)
             training_y.append(ys[i])
     return training_x, training_y, testing_x, testing_y
+
+def read_in_data(csv_name, row_names, y_name):
+    with open(csv_name, mode="r", newline="", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        xs = []
+        ys = []
+        for row in reader:
+            temp = [float(row[i]) for i in row_names]
+            xs.append(temp)
+            ys.append(float(row[y_name]))
+        return xs, ys
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@ class multilin:
         self.xs = [i + [1] for i in points]
         self.ys = outs
         self.weights = [random.randint(-10, 10) for _ in range(len(points[0]) + 1)]
-        self.alpha = 0.01
+        self.alpha = 0.05
 
     #calculates one output based on one set of inputs
     def calculate(self, x1s):
