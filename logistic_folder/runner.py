@@ -8,13 +8,15 @@ def main():
     training_unsanitized_x, training_y, testing_unsanitized_x, testing_y = split_data(xs, ys)
     training_sanitized_x, means, stdevs = normalize(training_unsanitized_x)
     testing_sanitized_x = normalize(testing_unsanitized_x, means, stdevs)[0]
-    model = logistic_regression(training_unsanitized_x, training_y)
+    model = logistic_regression(training_sanitized_x, training_y)
     model.train()
 
     for i in range(len(testing_sanitized_x)):
         yhat = model.calculate(testing_sanitized_x[i] + [1])
         yat = 1 if yhat > 0.5 else 0
         print(f"Guess: {yhat} Actual: {testing_y[i]} Match: {testing_y[i] == yat}")
+    print(model.weights)
+    print(actual_weights)
 
 #here we generate data for the model to train on
 #we imagine that the factors are contributing to heart disease
@@ -27,7 +29,7 @@ def generate_data():
     xs = [[random.randint(-10, 10) for _ in range(len(real_weights) - 1)] for _ in range(random.randint(100, 200))]
     #using this we calculate the probability by taking the logistic of the dot product
     zs = [sum([j[i] * real_weights[i] for i in range(len(j))]) + real_weights[-1] for j in xs]
-    ys = [1 if 1/(1+math.exp(i)) > 0.5 else 0 for i in zs]
+    ys = [1 if i > 0 else 0 for i in zs]
     return real_weights, xs, ys
 
 #splits data into training and testing
