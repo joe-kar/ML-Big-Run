@@ -3,6 +3,9 @@ import math
 
 def main():
     actual_weights, xs, ys = generate_data()
+    training_unsanitized_x, training_y, testing_unsanitized_x, testing_y = split_data(xs, ys)
+    training_sanitized_x, means, stdevs = normalize(training_unsanitized_x)
+    testing_sanitized_x = normalize(testing_unsanitized_x, means, stdevs)
 
 #here we generate data for the model to train on
 #we imagine that the factors are contributing to heart disease
@@ -20,11 +23,42 @@ def generate_data():
 
 #splits data into training and testing
 def split_data(rawxs, rawys):
-    pass
+    training_x = []
+    testing_x = []
+    training_y = []
+    testing_y = []
+    for i in range(len(rawxs)):
+        if random.random() <= 0.1:
+            testing_x.append(rawxs[i])
+            testing_y.append(rawys[i])
+        else:
+            training_x.append(rawxs[i])
+            training_y.append(rawys[i])
+    return training_x, training_y, testing_x, testing_y
 
 #normalizes data
-def normalize_data(xs):
-    pass
+def normalize(xs, means=None, stdevs=None):
+    if means == None:
+        xs_inverse = [[] for _ in range(len(xs[0]))]
+        #flip the matrix
+        for i in xs:
+            for j, k in enumerate(i):
+                xs_inverse[j].append(k)
+        #simple means function
+        means = [sum(i)/len(i) for i in xs_inverse]
+        stdevs = []
+        #standard deviation function
+        for count, feature_list in enumerate(xs_inverse):
+            stdevs.append((sum([(item - means[count])**2 for item in feature_list])/len(feature_list)) ** 0.5)
+
+    #create normalized values
+    xs_pro = []
+    for i in xs:
+        temp = []
+        for j, k in enumerate(i):
+            temp.append((k - means[j])/stdevs[j])
+        xs_pro.append(temp)
+    return xs_pro, means, stdevs
 
 if __name__ == "__main__":
     main()
