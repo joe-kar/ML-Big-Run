@@ -1,11 +1,20 @@
 import random
 import math
+from logistic_regressor import logistic_regression
 
 def main():
     actual_weights, xs, ys = generate_data()
+    print(f"Actual weights: {actual_weights}")
     training_unsanitized_x, training_y, testing_unsanitized_x, testing_y = split_data(xs, ys)
     training_sanitized_x, means, stdevs = normalize(training_unsanitized_x)
-    testing_sanitized_x = normalize(testing_unsanitized_x, means, stdevs)
+    testing_sanitized_x = normalize(testing_unsanitized_x, means, stdevs)[0]
+    model = logistic_regression(training_unsanitized_x, training_y)
+    model.train()
+
+    for i in range(len(testing_sanitized_x)):
+        yhat = model.calculate(testing_sanitized_x[i] + [1])
+        yat = 1 if yhat > 0.5 else 0
+        print(f"Guess: {yhat} Actual: {testing_y[i]} Match: {testing_y[i] == yat}")
 
 #here we generate data for the model to train on
 #we imagine that the factors are contributing to heart disease
@@ -13,7 +22,7 @@ def generate_data():
     #the weights are how much each factor contributes to the condition
     #negative weights are factors like exercise which decreases heart disease risk
     #positive weights are like hours spent sedentary which increases heart disease risk
-    real_weights = [random.randint(-10, 10) for _ in range(random.randint(1, 10))]
+    real_weights = [random.randint(-10, 10) for _ in range(random.randint(3, 10))]
     #each row is a person, and the column is how much of the factor that person does/is/has
     xs = [[random.randint(-10, 10) for _ in range(len(real_weights) - 1)] for _ in range(random.randint(100, 200))]
     #using this we calculate the probability by taking the logistic of the dot product
